@@ -12,11 +12,11 @@ glimpse(bl_funding)
 head(bl_funding)
 summary(bl_funding)
 
-# Let's look at the data range and check for missing values
+# checking for missing values
 range(bl_funding$year)
 colSums(is.na(bl_funding))
 
-# Create a long format for easier plotting of funding sources
+# Creating long format for easier plotting of funding sources
 bl_funding_long <- bl_funding %>%
   select(year, gia_gbp_millions, voluntary_gbp_millions, 
          investment_gbp_millions, services_gbp_millions, other_gbp_millions) %>%
@@ -26,11 +26,11 @@ bl_funding_long <- bl_funding %>%
   mutate(funding_source = str_remove(funding_source, "_gbp_millions"))
 
 
-# Let's see the long format data first
+#long format data 
 head(bl_funding_long, 10)
 tail(bl_funding_long, 10)
 
-# Create a stacked area chart showing funding composition over time
+#chart showing funding composition over time
 p1 <- bl_funding_long %>%
   ggplot(aes(x = year, y = amount_millions, fill = funding_source)) +
   geom_area(alpha = 0.7) +
@@ -47,7 +47,7 @@ p1 <- bl_funding_long %>%
 
 print(p1)
 
-# Let's also look at just the total funding trend
+#total funding trend
 p2 <- bl_funding %>%
   ggplot(aes(x = year, y = nominal_gbp_millions)) +
   geom_line(color = "steelblue", size = 1.2) +
@@ -61,7 +61,7 @@ p2 <- bl_funding %>%
 print(p2)
 
 
-# Let's examine what happened around 2006 and compare nominal vs real funding
+#what happened around 2006 and compare nominal vs real funding
 p3 <- bl_funding %>%
   select(year, nominal_gbp_millions, total_y2000_gbp_millions) %>%
   pivot_longer(cols = -year, names_to = "adjustment", values_to = "amount") %>%
@@ -82,7 +82,7 @@ p3 <- bl_funding %>%
 
 print(p3)
 
-# Let's also look at GIA as percentage of peak to understand funding recovery
+#GIA as percentage of peak to understand funding recovery
 p4 <- bl_funding %>%
   ggplot(aes(x = year, y = gia_as_percent_of_peak_gia)) +
   geom_line(color = "darkgreen", size = 1.2) +
@@ -98,7 +98,7 @@ p4 <- bl_funding %>%
 
 print(p4)
 
-# Let's look at the proportion of different funding sources over time
+#proportion of different funding sources over time
 bl_funding_proportions <- bl_funding %>%
   mutate(
     gia_prop = gia_gbp_millions / nominal_gbp_millions,
@@ -118,7 +118,7 @@ bl_funding_proportions <- bl_funding %>%
            source == "other" ~ "Other"
          ))
 
-# Create a stacked percentage chart
+#stacked percentage chart
 p5 <- bl_funding_proportions %>%
   ggplot(aes(x = year, y = proportion, fill = source)) +
   geom_area(position = "stack") +
@@ -133,7 +133,7 @@ p5 <- bl_funding_proportions %>%
 
 print(p5)
 
-# Let's also look at absolute growth in non-government sources
+#absolute growth in non-government sources
 p6 <- bl_funding %>%
   select(year, voluntary_gbp_millions, services_gbp_millions, investment_gbp_millions) %>%
   pivot_longer(cols = -year, names_to = "source", values_to = "amount") %>%
@@ -151,16 +151,6 @@ p6 <- bl_funding %>%
   theme(legend.position = "bottom")
 
 print(p6)
-
-
-# Let's create the foundation for your portfolio project
-library(tidyverse)
-library(patchwork)
-library(scales)
-library(viridis)
-
-# Create the core analysis that will anchor your portfolio
-# This will be your "hero" visualization
 
 # 1. Calculate key metrics for the dashboard
 bl_metrics <- bl_funding %>%
@@ -181,11 +171,11 @@ bl_metrics <- bl_funding %>%
     diversification_index = 1 - hhi
   )
 
-# First, let's check our data
+# checking data
 summary(bl_metrics$gia_as_percent_of_peak_gia)
 sum(is.na(bl_metrics$gia_as_percent_of_peak_gia))
 
-# Create the plot with updated syntax and handle any missing values
+# plot with updated syntax and handle any missing values
 p1 <- bl_metrics %>%
   filter(!is.na(gia_as_percent_of_peak_gia)) %>%  # Remove any NA values
   ggplot(aes(x = year, y = gia_as_percent_of_peak_gia)) +
@@ -204,7 +194,7 @@ p1 <- bl_metrics %>%
 print(p1)
 
 
-# Panel A - Government Funding Recovery (already created)
+# Panel A - Government Funding Recovery 
 p1 <- bl_metrics %>%
   filter(!is.na(gia_as_percent_of_peak_gia)) %>%
   ggplot(aes(x = year, y = gia_as_percent_of_peak_gia)) +
